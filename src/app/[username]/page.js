@@ -1,4 +1,6 @@
+import SupportButton from "./SupportButton";
 import clientPromise from "@/lib/mongodb";
+
 
 export default async function ProfilePage({ params }) {
   const { username } = await params;
@@ -20,6 +22,7 @@ export default async function ProfilePage({ params }) {
       />
       <h1>{user.name}</h1>
       <p>@{user.username}</p>
+      <SupportButton username={user.username} />
     </div>
   );
 }
