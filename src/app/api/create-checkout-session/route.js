@@ -14,12 +14,15 @@ export async function POST(request) {
           product_data: {
             name: `Support ${creatorUsername}`,
           },
-          unit_amount: amount * 100, // Stripe uses cents, not dollars
+          unit_amount: amount * 100,
         },
         quantity: 1,
       },
     ],
     mode: "payment",
+    metadata: {
+      creatorUsername: creatorUsername,
+    },
     success_url: `${process.env.NEXTAUTH_URL}/${creatorUsername}?success=true`,
     cancel_url: `${process.env.NEXTAUTH_URL}/${creatorUsername}?canceled=true`,
   });
