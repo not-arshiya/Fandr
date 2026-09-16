@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Fandr
 
-## Getting Started
+A Patreon / Buy Me a Coffee-style creator support platform. Visitors can discover a creator's public profile and send them one-time financial support through a secure Stripe checkout.
 
-First, run the development server:
+# Features
 
+- **Google OAuth authentication** via NextAuth.js
+- **Custom public creator profiles** at `/username`
+- **One-time payments** via Stripe Checkout
+- **Server-verified payment recording** via Stripe webhooks (not just client-side redirects)
+- **MongoDB** for storing users and payment records
+
+# Tech Stack
+
+- [Next.js 16](https://nextjs.org/) (App Router)
+- [React](https://react.dev/)
+- [MongoDB Atlas](https://www.mongodb.com/atlas)
+- [NextAuth.js](https://next-auth.js.org/) (Google provider)
+- [Stripe](https://stripe.com/) (Checkout + Webhooks)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+# How it works
+
+1. A user signs in with Google via NextAuth.
+2. On first login, a user document is created in MongoDB.
+3. The user picks a unique, lowercase username, generating a public profile at `/username`.
+4. Visitors to that profile can choose an amount and click "Support," which creates a Stripe Checkout session.
+5. On successful payment, Stripe sends a signed webhook event to the app's `/api/webhook` route.
+6. The webhook signature is verified server-side, then the payment is recorded in MongoDB — this can't be spoofed by a client redirect alone.
+
+# Running locally
+
+1. Clone the repo and install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   npm install
+```
+2. Create a `.env.local` file with the following variables:
+MONGODB_URI=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+3. Run the dev server:
+```bash
+   npm run dev
+```
+4. In a separate terminal, forward Stripe webhooks locally:
+```bash
+   stripe listen --forward-to localhost:3000/api/webhook
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Status
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+This is a portfolio/learning project built to demonstrate a full-stack payment and authentication flow. Stripe is currently running in **test mode** — no real payments are processed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Live Demo: 
